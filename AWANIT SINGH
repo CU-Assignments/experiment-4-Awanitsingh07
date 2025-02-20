@@ -1,0 +1,131 @@
+import java.util.*;
+
+class Employee {
+int id;
+String name;
+double salary;
+
+Employee(int id, String name, double salary) {
+this.id = id;
+this.name = name;
+this.salary = salary;
+}
+
+void display() {
+System.out.println("ID: " + id + ", Name: " + name + ", Salary: " + salary);
+}
+}
+
+public class EmployeeManager {
+static ArrayList<Employee> employees = new ArrayList<>();
+
+public static void main(String[] args) {
+Scanner sc = new Scanner(System.in);
+int choice;
+do {
+System.out.println("\n1. Add 2. Update 3. Remove 4. Search 5. Display 6. Exit");
+choice = sc.nextInt();
+switch (choice) {
+case 1:
+System.out.print("ID Name Salary: ");
+employees.add(new Employee(sc.nextInt(), sc.next(), sc.nextDouble()));
+break;
+case 2:
+System.out.print("ID to Update: ");
+Employee e = find(sc.nextInt());
+if (e != null) {
+System.out.print("New Name Salary: ");
+e.name = sc.next();
+e.salary = sc.nextDouble();
+} else System.out.println("Not found.");
+break;
+case 3:
+System.out.print("ID to Remove: ");
+employees.removeIf(emp -> emp.id == sc.nextInt());
+break;
+case 4:
+System.out.print("ID to Search: ");
+e = find(sc.nextInt());
+if (e != null) e.display();
+else System.out.println("Not found.");
+break;
+case 5:
+employees.forEach(Employee::display);
+break;
+}
+} while (choice != 6);
+}
+
+static Employee find(int id) {
+return employees.stream().filter(e -> e.id == id).findFirst().orElse(null);
+}
+}
+
+import java.util.*;
+
+class Card {
+String symbol, value;
+
+Card(String symbol, String value) {
+this.symbol = symbol;
+this.value = value;
+}
+
+public String toString() {
+return value + " of " + symbol;
+}
+}
+
+public class CardManager {
+public static void main(String[] args) {
+List<Card> cards = new ArrayList<>();
+cards.add(new Card("Hearts", "Ace"));
+cards.add(new Card("Diamonds", "King"));
+cards.add(new Card("Hearts", "Queen"));
+cards.add(new Card("Spades", "Jack"));
+
+Scanner sc = new Scanner(System.in);
+System.out.print("Enter symbol to search: ");
+String symbol = sc.nextLine();
+
+cards.stream().filter(card -> card.symbol.equalsIgnoreCase(symbol)).forEach(System.out::println);
+}
+}
+
+class TicketBooking implements Runnable {
+static int availableSeats = 10;
+boolean isVIP;
+
+TicketBooking(boolean isVIP) {
+this.isVIP = isVIP;
+}
+
+public void run() {
+if (isVIP) {
+Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+}
+synchronized (this) {
+if (availableSeats > 0) {
+availableSeats--;
+System.out.println(Thread.currentThread().getName() + " booked a seat. Seats left: " + availableSeats);
+} else {
+System.out.println(Thread.currentThread().getName() + " no seats available.");
+}
+}
+}
+
+public static void main(String[] args) {
+TicketBooking vipBooking = new TicketBooking(true);
+TicketBooking regularBooking = new TicketBooking(false);
+
+Thread t1 = new Thread(vipBooking, "VIP-1");
+Thread t2 = new Thread(vipBooking, "VIP-2");
+Thread t3 = new Thread(regularBooking, "Regular-1");
+Thread t4 = new Thread(regularBooking, "Regular-2");
+
+t1.start();
+t2.start();
+t3.start();
+t4.start();
+}
+}
